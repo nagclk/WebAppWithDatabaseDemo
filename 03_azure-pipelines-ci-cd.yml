@@ -169,7 +169,7 @@ stages:
   displayName: Create & Deploy to Dev
   dependsOn: Build_Stage
   variables:
-    azureSubscription: 'azure-connection' # couldn't be referenced
+    azureSubscription: 'Pay-As-You-Go(66bc95b7-5c49-4ea6-abcc-38ae21688cf2)' # couldn't be referenced
     ResourceGroupName: '$(Prefix)-$(Release.EnvironmentName)-$(UniqueId)-RG'
     Database.Admin: 'nagclk'
     Database.Password: 'Admin@123456#' # to be secured in Key Vault
@@ -200,7 +200,7 @@ stages:
   #    displayName: Validate ARM templates
   #    enabled: ${{ parameters.runCompletePipeline }}
    #   inputs:
-    #    azureSubscription: 'azure-connection'
+    #    azureSubscription: 'Pay-As-You-Go(66bc95b7-5c49-4ea6-abcc-38ae21688cf2)'
      #   action: 'Create Or Update Resource Group'
       #  resourceGroupName: '$(ResourceGroupName)'
        # location: 'West Europe'
@@ -290,7 +290,7 @@ stages:
     - task: AzureRmWebAppDeployment@4
       displayName: Deploy WebApp to Azure
       inputs:
-        azureSubscription: 'azure-connection'
+        azureSubscription: 'Pay-As-You-Go(66bc95b7-5c49-4ea6-abcc-38ae21688cf2)'
         appType: 'webApp'
         WebAppName: '$(WebAppName)'
         Package: '$(System.DefaultWorkingDirectory)/drop/WebApp.zip'
@@ -309,7 +309,7 @@ stages:
     - task: SqlAzureDacpacDeployment@1
       displayName: Deploy DacPac to SQL Azure
       inputs:
-        azureSubscription: 'azure-connection'
+        azureSubscription: 'Pay-As-You-Go(66bc95b7-5c49-4ea6-abcc-38ae21688cf2)'
         AuthenticationType: 'server'
         ServerName: '$(SqlServerName).database.windows.net,1433'
         DatabaseName: '$(Database.Name)'
