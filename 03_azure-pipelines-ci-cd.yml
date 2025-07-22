@@ -270,7 +270,7 @@ stages:
         ConnectedServiceNameARM: 'azure-connection'
         GenerateMethodParameterSetSelection: 'ResourceGroupName'
         ResourceGroupName: '$(ResourceGroupName)'
-        SubscriptionId: 'xxxxx'
+        SubscriptionId: '66bc95b7-5c49-4ea6-abcc-38ae21688cf2'
         EnableGSSscan: true
 
   - job: Deploy_DEV
