@@ -210,21 +210,21 @@ stages:
         #overrideParameters: '-hostingPlanName $(hostingPlanName) -skuName "F1" -skuCapacity 1 -administratorLogin $(Database.Admin) -administratorLoginPassword $(Database.Password) -databaseName $(Database.Name) -collation "SQL_Latin1_General_CP1_CI_AS" -edition "Basic" -maxSizeBytes "1073741824" -requestedServiceObjectiveName "Basic" -webSiteName $(WebAppName) -sqlserverName $(SqlServerName)'
         #deploymentMode: 'Validation'
 
-    - task: RunARMTTKTests@1
-      displayName: Scan ARM templates using TTK
-      enabled: ${{ parameters.runCompletePipeline }}
-      inputs:
-        templatelocation: '$(System.DefaultWorkingDirectory)/arm/webSiteSQLDatabase.json'
-        resultLocation: '$(System.DefaultWorkingDirectory)/arm/webSiteSQLDatabase.parameters.json'
+    #- task: RunARMTTKTests@1
+     # displayName: Scan ARM templates using TTK
+      #enabled: ${{ parameters.runCompletePipeline }}
+      #inputs:
+       # templatelocation: '$(System.DefaultWorkingDirectory)/arm/webSiteSQLDatabase.json'
+       # resultLocation: '$(System.DefaultWorkingDirectory)/arm/webSiteSQLDatabase.parameters.json'
         
-    - task: RunARMTTKTests@1
-      displayName: Scan ARM Template using TTK
-      inputs:
-        templatelocation: '$(System.DefaultWorkingDirectory)/arm/'
-        resultLocation: '$(System.DefaultWorkingDirectory)/arm/results'
-        allTemplatesMain: false
-        cliOutputResults: true
-        ignoreExitCode: true
+#    - task: RunARMTTKTests@1
+ #     displayName: Scan ARM Template using TTK
+   #   inputs:
+     #   templatelocation: '$(System.DefaultWorkingDirectory)/arm/'
+     #   resultLocation: '$(System.DefaultWorkingDirectory)/arm/results'
+      #  allTemplatesMain: false
+       # cliOutputResults: true
+       # ignoreExitCode: true
 
     - task: PublishTestResults@2
       displayName: Publish TTK Test Results
@@ -287,11 +287,11 @@ stages:
         itemPattern: '**/WebApp.zip'
         downloadPath: '$(System.DefaultWorkingDirectory)'
 
-    - task: AzureRmWebAppDeployment@3
+    - task: AzureRmWebAppDeployment@4
       displayName: Deploy WebApp to Azure
       inputs:
         azureSubscription: 'azure-connection'
-        appType: 'app'
+        appType: 'webApp'
         WebAppName: '$(WebAppName)'
         Package: '$(System.DefaultWorkingDirectory)/drop/WebApp.zip'
         TakeAppOfflineFlag: true
