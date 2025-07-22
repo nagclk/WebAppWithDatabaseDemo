@@ -233,15 +233,15 @@ stages:
         testResultsFiles: '$(System.DefaultWorkingDirectory)\arm\results\*-armttk.xml'
       condition: always()
 
-    - task: AzureCLI@2
-      displayName: Preview Template Changes (What-If)
-      inputs:
-        azureSubscription: 'Pay-As-You-Go(1)(66bc95b7-5c49-4ea6-abcc-38ae21688cf2)'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: 'az deployment group what-if --resource-group $(ResourceGroupName) --name rollout01 --template-file  WebSiteSQLDatabase.json --parameters WebSiteSQLDatabase.parameters.json'
-        arguments: '-hostingPlanName $(hostingPlanName) -skuName "F1" -skuCapacity 1 -administratorLogin $(Database.Admin) -administratorLoginPassword $(Database.Password) -databaseName $(Database.Name) -collation "SQL_Latin1_General_CP1_CI_AS" -edition "Basic" -maxSizeBytes "1073741824" -requestedServiceObjectiveName "Basic" -webSiteName $(WebAppName) -sqlserverName $(SqlServerName)'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/arm/'
+   # - task: AzureCLI@2
+    #  displayName: Preview Template Changes (What-If)
+     # inputs:
+      #  azureSubscription: 'Pay-As-You-Go(1)(66bc95b7-5c49-4ea6-abcc-38ae21688cf2)'
+       # scriptType: 'bash'
+        #scriptLocation: 'inlineScript'
+        #inlineScript: 'az deployment group what-if --resource-group $(ResourceGroupName) --name rollout01 --template-file  WebSiteSQLDatabase.json --parameters WebSiteSQLDatabase.parameters.json'
+        #arguments: '-hostingPlanName $(hostingPlanName) -skuName "F1" -skuCapacity 1 -administratorLogin $(Database.Admin) -administratorLoginPassword $(Database.Password) -databaseName $(Database.Name) -collation "SQL_Latin1_General_CP1_CI_AS" -edition "Basic" -maxSizeBytes "1073741824" -requestedServiceObjectiveName "Basic" -webSiteName $(WebAppName) -sqlserverName $(SqlServerName)'
+        #workingDirectory: '$(System.DefaultWorkingDirectory)/arm/'
 
     - task: AzureResourceManagerTemplateDeployment@3
       displayName: Deploy ARM templates
