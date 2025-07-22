@@ -45,7 +45,7 @@ stages:
         command: restore
         projects: '**/WebApp.csproj'
     
-    - task: WhiteSource Bolt@20
+    - task: WhiteSource@21
       displayName: Scan Nuget Packages
       enabled: ${{ parameters.runCompletePipeline }}
 
@@ -73,7 +73,7 @@ stages:
       displayName: Prepare analysis on SonarCloud
       enabled: ${{ parameters.runCompletePipeline }}
       inputs:
-        SonarCloud: SonarCloud
+        SonarCloud: sonar_test
         organization: nagclk
         projectKey: nagclk
 
@@ -173,10 +173,10 @@ stages:
   displayName: Create & Deploy to Dev
   dependsOn: Build_Stage
   variables:
-    azureSubscription: 'WebAppWithDatabaseDemo_spn' # couldn't be referenced
+    azureSubscription: 'azure-connection' # couldn't be referenced
     ResourceGroupName: '$(Prefix)-$(Release.EnvironmentName)-$(UniqueId)-RG'
-    Database.Admin: 'houssem'
-    Database.Password: '@Aa123456' # to be secured in Key Vault
+    Database.Admin: 'nagclk'
+    Database.Password: 'Admin@123456#' # to be secured in Key Vault
     Database.Name: 'EmployeesDB'
     WebAppName: '$(Prefix)-$(Release.EnvironmentName)-$(UniqueId)'
     WebAppNameUrl: 'https://$(WebAppName).azurewebsites.net/'
@@ -204,7 +204,7 @@ stages:
       displayName: Validate ARM templates
       enabled: ${{ parameters.runCompletePipeline }}
       inputs:
-        azureSubscription: 'WebAppWithDatabaseDemo_spn'
+        azureSubscription: 'azure-connection'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(ResourceGroupName)'
         location: 'West Europe'
@@ -216,9 +216,16 @@ stages:
 
     - task: RunARMTTKTests@1
       displayName: Scan ARM templates using TTK
+      enabled: ${{ parameters.runCompletePipeline }}
+      inputs:
+        templatelocation: '$(System.DefaultWorkingDirectory)/arm/webSiteSQLDatabase.json'
+        resultLocation: '$(System.DefaultWorkingDirectory)/arm/webSiteSQLDatabase.parameters.json'
+        
+    - task: RunARMTTKTests@1
+      displayName: Scan ARM Template using TTK
       inputs:
         templatelocation: '$(System.DefaultWorkingDirectory)/arm/'
-        resultLocation: '$(System.DefaultWorkingDirectory)/arm/results/'
+        resultLocation: '$(System.DefaultWorkingDirectory)/arm/results'
         allTemplatesMain: false
         cliOutputResults: true
         ignoreExitCode: true
@@ -234,7 +241,7 @@ stages:
       displayName: Preview Template Changes (What-If)
       inputs:
         workingDirectory: $(System.DefaultWorkingDirectory)/arm/
-        azureSubscription: 'WebAppWithDatabaseDemo_spn'
+        azureSubscription: 'azure-connection'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: 'az deployment group what-if --resource-group $(ResourceGroupName) --name rollout01 --template-file  WebSiteSQLDatabase.json --parameters WebSiteSQLDatabase.parameters.json'
@@ -244,7 +251,7 @@ stages:
       displayName: Deploy ARM templates
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: 'WebAppWithDatabaseDemo_spn'
+        azureResourceManagerConnection: 'azure-connection'
         subscriptionId: ''
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(ResourceGroupName)'
@@ -255,15 +262,15 @@ stages:
         overrideParameters: '-hostingPlanName $(hostingPlanName) -skuName "F1" -skuCapacity 1 -administratorLogin $(Database.Admin) -administratorLoginPassword $(Database.Password) -databaseName $(Database.Name) -collation "SQL_Latin1_General_CP1_CI_AS" -edition "Basic" -maxSizeBytes "1073741824" -requestedServiceObjectiveName "Basic" -webSiteName $(WebAppName) -sqlserverName $(SqlServerName)'
         deploymentMode: 'Complete'
 
-    - task: AzSKARMTemplateChecker@4
+    - task: AzSKSVTs@4
       displayName: Scan Azure Resources
       enabled: ${{ parameters.runCompletePipeline }}
       continueOnError: true
       inputs:
-        ConnectedServiceNameARM: 'WebAppWithDatabaseDemo_spn'
+        ConnectedServiceNameARM: 'azure-connection'
         GenerateMethodParameterSetSelection: 'ResourceGroupName'
         ResourceGroupName: '$(ResourceGroupName)'
-        SubscriptionId: '4b72ed90-7ca3-4e76-8d0f-31a2c0bee7a3'
+        SubscriptionId: 'xxxxx'
         EnableGSSscan: true
 
   - job: Deploy_DEV
@@ -287,7 +294,7 @@ stages:
     - task: AzureRmWebAppDeployment@3
       displayName: Deploy WebApp to Azure
       inputs:
-        azureSubscription: 'WebAppWithDatabaseDemo_spn'
+        azureSubscription: 'azure-connection'
         appType: 'app'
         WebAppName: '$(WebAppName)'
         Package: '$(System.DefaultWorkingDirectory)/drop/WebApp.zip'
@@ -306,7 +313,7 @@ stages:
     - task: SqlAzureDacpacDeployment@1
       displayName: Deploy DacPac to SQL Azure
       inputs:
-        azureSubscription: 'WebAppWithDatabaseDemo_spn'
+        azureSubscription: 'azure-connection'
         AuthenticationType: 'server'
         ServerName: '$(SqlServerName).database.windows.net,1433'
         DatabaseName: '$(Database.Name)'
