@@ -247,7 +247,7 @@ stages:
       displayName: Deploy ARM templates
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: 'azure-connection'
+        azureResourceManagerConnection: 'Pay-As-You-Go(66bc95b7-5c49-4ea6-abcc-38ae21688cf2)'
         subscriptionId: '66bc95b7-5c49-4ea6-abcc-38ae21688cf2'
         action: 'Create Or Update Resource Group'
         resourceGroupName: '$(ResourceGroupName)'
@@ -263,7 +263,7 @@ stages:
       enabled: ${{ parameters.runCompletePipeline }}
       continueOnError: true
       inputs:
-        ConnectedServiceNameARM: 'azure-connection'
+        ConnectedServiceNameARM: 'Pay-As-You-Go(66bc95b7-5c49-4ea6-abcc-38ae21688cf2)'
         GenerateMethodParameterSetSelection: 'ResourceGroupName'
         ResourceGroupName: '$(ResourceGroupName)'
         SubscriptionId: '66bc95b7-5c49-4ea6-abcc-38ae21688cf2'
