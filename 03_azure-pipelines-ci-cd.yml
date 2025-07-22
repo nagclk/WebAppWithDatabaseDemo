@@ -174,7 +174,7 @@ stages:
     Database.Admin: 'nagclk'
     Database.Password: 'Admin@123456#' # to be secured in Key Vault
     Database.Name: 'EmployeesDB'
-    WebAppName: '$(Prefix)-$(Release.EnvironmentName)-$(UniqueId)'
+    WebAppName: 'nagclk-$(Prefix)-$(Release.EnvironmentName)-$(UniqueId)'
     WebAppNameUrl: 'https://$(WebAppName).azurewebsites.net/'
     SqlServerName: '$(Prefix)-sql-$(Release.EnvironmentName)-$(UniqueId)'
     Prefix: 'tunis'
